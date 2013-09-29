@@ -1,0 +1,275 @@
+<<PackageHeader(pi_tracker)>> <<TOC(4)>>
+
+== Overview ==
+The pi_tracker package consists of four interrelated but independent ROS nodes that communicate over ROS topics and services:
+ * `skeleton_tracker` for talking to the OpenNI skeleton tracking API and publishing the joint configuration and tf frames.  Publishes joints names, positions, orientations and confidence values to the `/skeleton` topic.
+ * `tracker_command` for detecting gesture commands and connecting to services that control the robot.  Subscribes to the `/skeleton` topic and makes calls to services on other nodes.  New gestures and commands can be added easily by defining simple functions over the joint configurations.
+ * `tracker_base_controller` for controlling the movements of a differential drive (non-holonomic) mobile base.  Subscribes to `/skeleton` and publishes to `/cmd_vel`.
+ * `tracker_joint_controller` for teleoperating the joints of the robot including arms, torso and head.  Subscribes to `/skeleton` and publishes to `/cmd_joints`.
+
+== Skeleton Tracker Node ==
+{{{
+#!clearsilver CS/NodeAPI
+node.0 {
+name = skeleton_tracker
+desc = A ROS node written in C++ for talking to the OpenNI skeleton tracking API and publishing the joint configuration and tf frames.  Based on Taylor Veltrop's teleop_kinect.cpp source at [[veltrobot_teleop]].
+}
+
+pub {
+  0.name = /skeleton
+  0.type = pi_tracker/Skeleton
+  0.desc = Joint names, positions, orientations and confidence values.
+}
+
+param {
+  0.name = ~tracker_rate
+  0.type = int
+  0.desc = Rate to publish skeleton data.
+  0.default = 1
+}
+
+prov_tf {
+  0.from = openni_depth
+  0.to   = head
+  0.desc = Head transform
+
+  1.from = openni_depth
+  1.to   = neck
+  1.desc = Neck transform
+
+  2.from = openni_depth
+  2.to   = torso
+  2.desc = Torso transform
+
+  3.from = openni_depth
+  3.to   = left_shoulder
+  3.desc = Left shoulder transform
+
+  4.from = openni_depth
+  4.to   = left_elbow
+  4.desc = Left elbow transform
+
+  5.from = openni_depth
+  5.to   = left_hand
+  5.desc = Left hand transform
+
+  6.from = openni_depth
+  6.to   = right_shoulder
+  6.desc = Right shoulder transform
+
+  7.from = openni_depth
+  7.to   = right elbow
+  7.desc = Right elbow transform
+
+  8.from = openni_depth
+  8.to   = right_hand
+  8.desc = Right hand transform
+
+  9.from = openni_depth
+  9.to   = left_hip
+  9.desc = Left hip transform
+
+  10.from = openni_depth
+  10.to   = left_knee
+  10.desc = Left knee transform
+
+  11.from = openni_depth
+  11.to   = left_foot
+  11.desc = Left foot transform
+
+  12.from = openni_depth
+  12.to   = right_hip
+  12.desc = Right hip transform
+
+  13.from = openni_depth
+  13.to   = right_knee
+  13.desc = Right knee transform
+
+  14.from = openni_depth
+  14.to   = right_foot
+  14.desc = Right foot transform
+}
+
+}}}
+
+== Tracker Command Node ==
+{{{
+#!clearsilver CS/NodeAPI
+node.1 {
+name = tracker_command
+desc = A ROS node written in Python for detecting gesture commands and connecting to services that control the robot.  New gestures and commands can be easily added by defining simple functions over the joint configurations.
+
+sub {
+  0.name = /skeleton
+  0.type = pi_tracker/Skeleton
+  0.desc = Joint names, positions, orientations and confidence values.
+}
+
+param {
+  0.name = ~command_rate
+  0.type = int
+  0.desc = Rate to compute gestures from the skeleton tracker data.
+  0.default = 1
+}
+
+}}}
+
+=== Tracker Command Required Services ===
+
+Tracker command requires one or more services from each node it commands.  In its current form, the tracker command node sends simple string commands to control nodes via their `set_command` service.  For example, sending the command "STOP" to the tracker_base_controller node (see below) tells the base to stop moving.
+
+
+== Tracker Base Controller Node ==
+{{{
+#!clearsilver CS/NodeAPI
+node.2 {
+name = tracker_base_controller
+desc = A ROS node written in Python for controlling the movements of a differential drive (non-holonomic) mobile base using either the hands or the feet.
+
+pub {
+  0.name = /cmd_vel
+  0.type = geometry_msgs/Twist
+  0.desc = Command the robot base to move forward/backward or rotate in place.
+}
+
+sub {
+  0.name = /skeleton
+  0.type = pi_tracker/Skeleton
+  0.desc = Joint names, positions, orientations and confidence values.
+}
+
+srv {
+  0.name = ~set_command
+  0.type = pi_tracker/SetCommand
+  0.desc = Set the mode command to control the base.  Commands include: "STOP", "DRIVE_BASE_HANDS" or "DRIVE_BASE_FEET"
+}
+
+param {
+  0.name = ~base_controller_rate
+  0.type = int
+  0.desc = Rate to send motion commands to the base.
+  0.default = 1
+
+  1.name = ~max_drive_speed
+  1.type = double
+  1.desc = Maximum forward/backward speed allowed.
+  1.default = 0.3
+
+  2.name = ~maximum_rotation_speed
+  2.type = double
+  2.desc = Maximum rotation speed allowed.
+  2.default = 0.5
+}
+
+}}}
+
+== Tracker Joint Controller Node ==
+{{{
+#!clearsilver CS/NodeAPI
+node.2 {
+name = tracker_joint_controller
+desc =  A ROS node written in Python for teleoperating the joints of a multi-jointed robot, typically humanoid in form with arms, torso and a pan and tilt head.
+
+pub {
+  0.name = /cmd_joints
+  0.type = sensor_msgs/JointState
+  0.desc = Command the robot's joints to move to goal positions at a designated speed.
+}
+
+sub {
+  0.name = /skeleton
+  0.type = pi_tracker/Skeleton
+  0.desc = Joint names, positions, orientations and confidence values.
+}
+
+srv {
+  0.name = ~set_command
+  0.type = pi_tracker/SetCommand
+  0.desc = Set the mode command to control the joints.  Commands include: "STOP", "TELEOP_JOINTS"
+}
+
+param {
+  0.name = ~joint_controller_rate
+  0.type = int
+  0.desc = Rate to publish the joint updates.
+  0.default = 5
+
+  1.name = ~default_joint_speed
+  1.type = double
+  1.desc = Default movement speed for the joints in rad/s.
+  1.default = 0.5
+
+  2.name = ~use_real_robot
+  2.type = boolean
+  2.desc = Whether or not there is a real robot on the other end.  Otherwise, the joint commands are published on the `/joint_state` topic so the result can be viewed in RViz.
+  2.default = True
+}
+
+}}}
+
+=== Example Launch File ===
+It is recommended to split the launch file into two parts.  The first launch file brings up the Kinect, robot state publisher and skeleton publisher.  The second launch file fires up the various tracker nodes.  This way you can play with variations on the tracker nodes without having to disconnect and reconnect to the Kinect camera.
+
+Sample Kinect Launch File:
+{{{
+<launch>	
+	<param name="robot_description" command="$(find xacro)/xacro.py '$(find pi_robot)/urdf/kinect.urdf.xacro'" />
+    <param name="/use_sim_time" value="False" />
+ 
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+    	<param name="publish_frequency" value="20.0"/>
+    </node>
+    
+    <include file="$(find openni_camera)/launch/kinect_frames.launch" />
+
+    <rosparam command="load" file="$(find pi_tracker)/params/tracker_params.yaml" />
+    <node name="skeleton_tracker" pkg="pi_tracker" type="skeleton_tracker" />
+
+	<node pkg="tf" type="static_transform_publisher" name="base_world_broadcaster" args="0 0 0 0 0 0 /base_link /world 100" />
+</launch>
+
+}}}
+
+Sample Tracker Nodes Launch File:
+{{{
+<launch>
+    <node name="tracker_command" pkg="pi_tracker" type="tracker_command.py" output="screen" />
+    <node name="tracker_base_controller" pkg="pi_tracker" type="tracker_base_controller.py" output="screen" />
+    <node name="tracker_joint_controller" pkg="pi_tracker" type="tracker_joint_controller.py" output="screen" />
+</launch>
+}}}
+
+=== Example YAML File ===
+{{{
+command_rate: 1
+tracking_rate: 2
+base_controller_rate: 2
+joint_controller_rate: 5
+use_real_robot: True
+default_joint_speed: 0.5
+max_drive_speed: 0.3
+max_rotation_speed: 0.5
+
+fixed_frame: openni_depth
+frame_map: {
+   head: head_pan_joint,
+   neck: head_tilt_joint,
+   torso: torso_joint,
+   left_shoulder: left_shoulder_lift_joint,
+   left_elbow: left_elbow_joint,
+   left_hand: left_hand_joint,
+   right_shoulder: right_shoulder_joint,
+   right_elbow: right_elbow_joint,
+   right_hand: right_hand_joint,
+   left_hip: no_joint,
+   left_knee: no_joint,
+   left_foot: no_joint,
+   right_hip: no_joint,
+   right_knee: no_joint,
+   right_foot: no_joint
+}
+}}}
+
+
+## AUTOGENERATED DON'T DELETE
+## CategoryPackage

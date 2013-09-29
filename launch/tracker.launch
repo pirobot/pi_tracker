@@ -1,0 +1,13 @@
+<launch>
+  <node name="tracker_command" pkg="pi_tracker" type="tracker_command.py" output="screen">
+    <rosparam command="load" file="$(find pi_tracker)/params/tracker_params.yaml" />
+  </node>
+
+  <node name="tracker_base_controller" pkg="pi_tracker" type="tracker_base_controller.py" output="screen">
+    <rosparam command="load" file="$(find pi_tracker)/params/tracker_params.yaml" />
+  </node>
+
+  <node name="tracker_joint_controller" pkg="pi_tracker" type="tracker_joint_controller.py" output="screen">
+    <rosparam command="load" file="$(find pi_tracker)/params/tracker_params.yaml" />
+  </node>
+</launch>

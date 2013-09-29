@@ -1,0 +1,43 @@
+command_rate: 2
+tracking_rate: 2
+base_controller_rate: 2
+joint_controller_rate: 2
+default_joint_speed: 0.6
+max_drive_speed: 0.5
+max_rotation_speed: 0.5
+base_control_side: right
+
+use_real_robot: False
+
+# Use these values for a typical non-holonomic robot.
+scale_drive_speed: 1.0
+scale_rotation_speed: 1.0
+reverse_rotation: False
+holonomic: False
+
+# Use the following scale factors for the Rovio.
+#scale_drive_speed: 4.0
+#scale_rotation_speed: 0.4
+#reverse_rotation: True
+#holonomic: True
+
+fixed_frame: openni_depth_frame
+
+skel_to_joint_map: {
+   head: head_pan_joint,
+   neck: head_tilt_joint,
+   torso: torso_joint,
+   left_shoulder: left_shoulder_lift_joint,
+   left_elbow: left_elbow_joint,
+   left_hand: left_hand_joint,
+   right_shoulder: right_shoulder_joint,
+   right_elbow: right_elbow_joint,
+   right_hand: right_hand_joint,
+   left_hip: no_joint,
+   left_knee: no_joint,
+   left_foot: no_joint,
+   right_hip: no_joint,
+   right_knee: no_joint,
+   right_foot: no_joint
+}
+

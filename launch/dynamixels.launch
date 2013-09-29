@@ -1,0 +1,47 @@
+<launch>
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find demo_tracker)/urdf/pi_robot.urdf.xacro'" />
+  <param name="/use_sim_time" value="False" />
+ 
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+    <param name="publish_frequency" value="50.0"/>
+  </node>
+  
+	<!-- Define the namespace for all our controllers -->
+	<arg name="ax12_namespace" value="ax12_controller" />
+
+	<!-- Start the ax12 controller manager -->
+    <node ns="$(arg ax12_namespace)" name="ax12_manager" pkg="ax12_controller_core" type="controller_manager.py" required="true" output="screen">
+        <param name="port_name" type="str" value="/dev/usb2dynamixel" />
+        <param name="baud_rate" type="int" value="1000000"/>
+        <param name="min_motor_id" type="int" value="1"/>
+        <param name="max_motor_id" type="int" value="15"/>
+        <param name="update_rate" type="int" value="15"/>
+    </node>
+
+    <!-- Load joint controller configuration to parameter server -->
+    <rosparam ns="$(arg ax12_namespace)" file="$(find pi_tracker)/params/dynamixels_params.yaml" command="load"/>
+
+    <!-- Start individual joint controllers -->
+    <node ns="$(arg ax12_namespace)" name="ax12_controller_spawner" pkg="ax12_controller_core" type="controller_spawner.py"
+          args="--port /dev/usb2dynamixel
+		head_pan_controller
+		head_tilt_controller
+		right_shoulder_pan_controller
+		right_shoulder_lift_controller
+		right_arm_roll_controller
+		right_elbow_controller
+		right_forearm_controller
+		right_wrist_controller
+		left_shoulder_pan_controller
+		left_shoulder_lift_controller
+		left_arm_roll_controller
+		left_elbow_controller
+		left_forearm_controller
+		left_wrist_controller"
+        output="screen" />
+        
+    <!-- Start the ax12 joint state publisher -->
+    <node ns="$(arg ax12_namespace)" name="ax12_joint_state_publisher" pkg="pi_demo" type="ax12_joint_state_publisher.py" output="screen">
+    	<rosparam file="$(find pi_tracker)/params/dynamixels_params.yaml" command="load"/>
+    </node>
+</launch>
