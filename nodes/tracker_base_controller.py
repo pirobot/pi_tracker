@@ -20,7 +20,6 @@
     http://www.gnu.org/licenses/gpl.html
 """
 
-import roslib; roslib.load_manifest('pi_tracker')
 import rospy
 from geometry_msgs.msg import Twist
 import pi_tracker_lib as PTL

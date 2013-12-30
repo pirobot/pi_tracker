@@ -22,7 +22,6 @@
     http://www.gnu.org/licenses/gpl.html
 """
 
-import roslib; roslib.load_manifest('pi_tracker')
 import rospy
 import pi_tracker_lib as PTL
 from sensor_msgs.msg import JointState
