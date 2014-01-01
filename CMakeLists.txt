@@ -4,7 +4,6 @@ project(pi_tracker)
 find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	rospy
-#	tf
 	std_msgs
 	geometry_msgs
 	nav_msgs
@@ -12,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 link_directories(
   ${catkin_LIBRARY_DIRS}
-  #${Boost_LIBRARY_DIRS}
 )
 
 include_directories(${catkin_INCLUDE_DIRS})
@@ -30,9 +28,5 @@ catkin_package(
     CATKIN DEPENDS message_runtime
 	rospy
 	roscpp
-#	tf
-#	nav_msgs
-#	std_msgs
-#	geometry_msgs
 )
 
