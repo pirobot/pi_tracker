@@ -1,7 +1,0 @@
-<launch>
-
-  <node pkg="pi_tracker" name="track_joint" type="track_joint.py" output="screen">
-    <rosparam command="load" file="$(find pi_tracker)/params/tracker_params.yaml" />
-  </node>
-  
-</launch>

@@ -23,7 +23,7 @@
 import rospy
 from geometry_msgs.msg import Twist
 import pi_tracker_lib as PTL
-from pi_tracker.msg import Skeleton
+from skeleton_markers.msg import Skeleton
 from pi_tracker.srv import *
 import PyKDL as KDL
 from math import atan2, sqrt, copysign, pi

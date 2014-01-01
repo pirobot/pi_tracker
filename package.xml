@@ -1,0 +1,33 @@
+<package>
+  <name>pi_tracker</name>
+  <version>0.4.0</version>
+  <description>
+     Skeleton Tracker Teleop Package for the Pi Robot Project
+  </description>
+
+  <maintainer email="patrick@pirobot.org">Patrick Goebel</maintainer>
+  <license>BSD</license>
+  <url type="website">http://ros.org/wiki/pi_tracker</url>
+  <url type="https://github.com/pirobot/pi_tracker/issues"></url>
+  <author email="patrick@pirobot.org">Patrick Goebel</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>roscpp</build_depend>
+
+  <run_depend>skeleton_markers</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>roscpp</run_depend>
+
+</package>
