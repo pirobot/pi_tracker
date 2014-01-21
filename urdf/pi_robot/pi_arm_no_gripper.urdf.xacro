@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+
+<robot name="arm_no_gripper" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find rbx2_description)/urdf/pi_robot/dynamixel_arm_hardware.xacro" />
+
+  <macro name="arm" params="side reflect parent color *origin"> 
+    <link name="${side}_arm_base_link" />     
+    <joint name="${side}_arm_base_joint" type="fixed">
+      <insert_block name="origin" />
+      <parent link="${parent}_link"/>
+      <child link="${side}_arm_base_link" />
+    </joint>
+
+    <!-- shoulder pan joint -->
+    <bioloid_F2_fixed parent="${side}_arm_base_link" name="${side}_arm_shoulder_F2_0" color="${color}">
+      <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}" />
+    </bioloid_F2_fixed>
+    
+    <dynamixel_AX12_revolute parent="${side}_arm_shoulder_F2_0_link" name="${side}_arm_shoulder_pan" vlimit="1.571" llimit="-1.8" ulimit="1.8">
+      <!-- origin xyz="0 ${-(F2_DEPTH)/2} 0" rpy="0 0 0"/ -->
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </dynamixel_AX12_revolute>
+    
+    <!-- shoulder lift joint -->
+    <bioloid_F3_fixed parent="${side}_arm_shoulder_pan_link" name="${side}_arm_shoulder_F3_0" color="${color}">
+      <origin xyz="0 0 ${-AX12_DEPTH + F10_HEIGHT/2 + F2_DEPTH/2 - 0.0045}" rpy="0 ${PI} 0" />
+    </bioloid_F3_fixed>
+    
+    <dynamixel_AX12_revolute parent="${side}_arm_shoulder_F3_0_link" name="${side}_arm_shoulder_lift" vlimit="1.571" llimit="-2.617" ulimit="2.617">
+      <origin xyz="0 0 ${(AX12_WIDTH)/2}" rpy="${PI/2} ${PI} ${PI}" />
+    </dynamixel_AX12_revolute>
+    
+    <!-- shoulder roll joint -->  
+    <dynamixel_AX12_revolute parent="${side}_arm_shoulder_lift_link" name="${side}_arm_shoulder_roll" vlimit="1.571" llimit="-2.617" ulimit="2.617">
+      <origin xyz="0 0 ${-(AX12_HEIGHT + AX12_WIDTH/2 + 0.004)}" rpy="${PI/2} 0 ${PI/2}" />
+    </dynamixel_AX12_revolute>
+    
+    <bioloid_F3_fixed parent="${side}_arm_shoulder_roll_link" name="${side}_arm_shoulder_roll_F3_0" color="${color}">
+      <origin xyz="${AX12_WIDTH/2} 0 ${-(AX12_DEPTH - F3_WIDTH)/2}" rpy="0 ${PI/2} 0" />
+    </bioloid_F3_fixed>
+
+    <bioloid_F9_fixed parent="${side}_arm_shoulder_roll_F3_0_link" name="${side}_arm_shoulder_roll_F9_0" color="${color}">
+      <origin xyz="0 ${-F9_DEPTH/2 - 0.001} ${-F9_DEPTH/2 + 0.004}" rpy="0 ${PI/2} 0" />
+    </bioloid_F9_fixed>
+    
+    <!-- elbow flex joint -->
+    <bioloid_F3_fixed parent="${side}_arm_shoulder_roll_F9_0_link" name="${side}_arm_elbow_F3_0" color="${color}">
+      <origin xyz="0.01 ${-AX12_HEIGHT/2 + 0.0035} 0" rpy="${PI/2} ${PI} ${PI}" />
+    </bioloid_F3_fixed>
+    
+    <dynamixel_AX12_fixed parent="${side}_arm_elbow_F3_0_link" name="${side}_arm_elbow_flex_servo">
+      <origin xyz="0 0 ${-(AX12_WIDTH + F3_HEIGHT/2)}" rpy="0 ${PI} 0" />
+    </dynamixel_AX12_fixed>
+    
+    <bioloid_F2_revolute parent="${side}_arm_elbow_flex_servo_link" name="${side}_arm_elbow_flex" color="${color}" vlimit="1.571" llimit="-1.8" ulimit="1.8">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </bioloid_F2_revolute>
+    
+    <!-- forearm flex joint -->
+    <bioloid_F3_fixed parent="${side}_arm_elbow_flex_link" name="${side}_arm_forearm_F3_0" color="${color}">
+      <origin xyz="0 0 ${(AX12_WIDTH + F2_DEPTH + F10_HEIGHT)/2}" rpy="${PI} 0 ${PI/2}" />
+    </bioloid_F3_fixed>
+    
+    <dynamixel_AX12_fixed parent="${side}_arm_forearm_F3_0_link" name="${side}_arm_forearm_flex_servo">
+      <origin xyz="0 0 ${-(AX12_DEPTH/2 + F2_DEPTH + 0.0042)}" rpy="${PI} 0 0" />
+    </dynamixel_AX12_fixed>
+    
+    <bioloid_F2_revolute parent="${side}_arm_forearm_flex_servo_link" name="${side}_arm_forearm_flex" color="${color}" vlimit="1.571" llimit="-1.8" ulimit="1.8">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </bioloid_F2_revolute>
+    
+    <bioloid_F2_fixed parent="${side}_arm_forearm_flex_link" name="${side}_arm_forearm_F2_0" color="${color}">
+      <origin xyz="0 0 ${AX12_DEPTH/2 + 2*F2_DEPTH - 0.005}" rpy="0 ${PI} ${PI/2}" />
+    </bioloid_F2_fixed>
+    
+    <!-- wrist flex joint -->
+    <dynamixel_AX12_revolute parent="${side}_arm_forearm_F2_0_link" name="${side}_arm_wrist_flex" vlimit="1.571" llimit="-1.57" ulimit="1.57">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </dynamixel_AX12_revolute>
+    
+    <bioloid_F3_fixed parent="${side}_arm_wrist_flex_link" name="${side}_arm_wrist_F3_0" color="${color}">
+      <origin xyz="0 0 ${-(AX12_DEPTH + F2_HEIGHT + F3_HEIGHT)/2)}" rpy="${PI} 0 0" />
+    </bioloid_F3_fixed>
+    
+    <bioloid_F11_fixed parent="${side}_arm_wrist_F3_0_link" name="${side}_hand" color="LightGray">
+      <origin xyz="0 0 0.002" rpy="${PI/2} 0 0" />
+    </bioloid_F11_fixed>
+
+  </macro>
+
+</robot>

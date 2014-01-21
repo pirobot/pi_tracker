@@ -1,6 +1,6 @@
-dynamixels: ['head_pan', 'head_tilt', 'left_shoulder_lift', 'left_shoulder_pan', 'left_arm_roll', 'left_elbow', 'left_forearm', 'left_wrist', 'right_shoulder_lift', 'right_shoulder_pan', 'right_arm_roll', 'right_elbow', 'right_forearm', 'right_wrist']
+joints: ['head_pan', 'head_tilt', 'left_shoulder_lift', 'left_shoulder_pan', 'left_arm_roll', 'left_elbow', 'left_forearm', 'left_wrist', 'right_shoulder_lift', 'right_shoulder_pan', 'right_arm_roll', 'right_elbow', 'right_forearm', 'right_wrist']
 
-head_pan_controller:
+head_pan_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -13,7 +13,7 @@ head_pan_controller:
         min: 0
         max: 1024
 
-head_tilt_controller:
+head_tilt_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -26,7 +26,7 @@ head_tilt_controller:
         min: 300
         max: 800
 
-right_shoulder_pan_controller:
+right_shoulder_pan_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -39,7 +39,7 @@ right_shoulder_pan_controller:
         min: 0
         max: 1023
 
-right_shoulder_lift_controller:
+right_shoulder_lift_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -52,7 +52,7 @@ right_shoulder_lift_controller:
         min: 0
         max: 1023
 
-right_arm_roll_controller:
+right_arm_roll_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -65,7 +65,7 @@ right_arm_roll_controller:
         min: 0
         max: 1023
 
-right_elbow_controller:
+right_elbow_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -78,7 +78,7 @@ right_elbow_controller:
         min: 0
         max: 1023
         
-right_forearm_controller:
+right_forearm_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -91,7 +91,7 @@ right_forearm_controller:
         min: 0
         max: 1023
 
-right_wrist_controller:
+right_wrist_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -104,7 +104,7 @@ right_wrist_controller:
         min: 0
         max: 1023
 
-left_shoulder_pan_controller:
+left_shoulder_pan_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -117,7 +117,7 @@ left_shoulder_pan_controller:
         min: 0
         max: 1023
 
-left_shoulder_lift_controller:
+left_shoulder_lift_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -130,7 +130,7 @@ left_shoulder_lift_controller:
         min: 0
         max: 1023
 
-left_arm_roll_controller:
+left_arm_roll_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -143,7 +143,7 @@ left_arm_roll_controller:
         min: 0
         max: 1023
 
-left_elbow_controller:
+left_elbow_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -156,7 +156,7 @@ left_elbow_controller:
         min: 0
         max: 1023
         
-left_forearm_controller:
+left_forearm_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -169,7 +169,7 @@ left_forearm_controller:
         min: 0
         max: 1023
 
-left_wrist_controller:
+left_wrist_joint:
     controller:
         package: ax12_controller_core
         module: joint_position_controller
@@ -182,16 +182,4 @@ left_wrist_controller:
         min: 0
         max: 1023
 
-#torso_controller:
-#    controller:
-#        package: ax12_controller_core
-#        module: joint_position_controller
-#        type: JointPositionControllerAX12
-#    joint_name: torso_joint
-#    joint_speed: 1.17
-#    motor:
-#        id: 11
-#        init: 512
-#        min: 0
-#        max: 1023
         

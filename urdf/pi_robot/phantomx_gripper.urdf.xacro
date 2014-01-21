@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<robot name="gripper" xmlns:xacro="http://ros.org/wiki/xacro">
+
+   <property name="PI" value="3.14159"/>
+   <property name="M_SCALE" value="0.01"/>
+
+   <macro name="gripper" params="side reflect parent color *origin"> 
+
+      <!-- Links -->
+      <dynamixel_AX12_fixed parent="${parent}" name="${side}_gripper_servo">
+         <origin xyz="-0.02275 0 ${-AX12_WIDTH/2}" rpy="${-PI/2} 0 ${PI/2}" />
+      </dynamixel_AX12_fixed>      
+      
+      <link name="${side}_gripper_guide_rail">
+         <visual>
+            <origin xyz="${M_SCALE*-1.15} ${M_SCALE*1.3} ${M_SCALE*-0.5}" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="package://rbx2_description/meshes/guide_rail_fixed_link.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+            </geometry>
+            <material name="Black" />
+         </visual>
+         <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="package://rbx2_description/meshes/guide_rail_fixed_link.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+            </geometry>
+         </collision>
+         <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="1" />
+            <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+         </inertial>
+      </link>
+      
+      <link name="${side}_gripper_right_finger">
+         <visual>
+            <origin xyz="${M_SCALE*-1.5} ${M_SCALE*-0.5} ${M_SCALE*0.5}" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="package://rbx2_description/meshes/gripper_hand_fixed_link.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+            </geometry>
+            <material name="Black" />
+         </visual>
+         <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="package://rbx2_description/meshes/gripper_hand_fixed_link.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+            </geometry>
+         </collision>
+         <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="1" />
+            <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+         </inertial>
+      </link>
+      
+      <link name="${side}_gripper_left_finger">
+         <visual>
+            <origin xyz="${M_SCALE*-1.5} ${M_SCALE*-0.5} ${M_SCALE*0.5}" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="package://rbx2_description/meshes/gripper_hand_fixed_link.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+            </geometry>
+            <material name="Black" />
+         </visual>
+         <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+               <mesh filename="package://rbx2_description/meshes/gripper_hand_fixed_link.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+            </geometry>
+         </collision>
+         <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="1" />
+            <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+         </inertial>
+      </link>
+      
+      <!-- Joints -->      
+      <joint name="${side}_gripper_guide_rail_joint" type="fixed">
+         <origin xyz="0 0.0225 0" rpy="0 ${PI/2} ${PI/2}" />
+         <parent link="${side}_gripper_servo_link" />
+         <child link="${side}_gripper_guide_rail" />
+      </joint>
+      
+      <joint name="${side}_gripper_right_finger_joint" type="prismatic">
+         <origin xyz="${M_SCALE*-3.5} ${M_SCALE*0} ${M_SCALE*0}" rpy="${-PI*1.5} ${PI*2} ${-PI/2}" />
+         <parent link="${side}_gripper_guide_rail" />
+         <child link="${side}_gripper_right_finger" />
+         <axis xyz="0 0 1" />
+         <limit lower="-0.016" upper="0.0" effort="0" velocity="0.5" />
+      </joint>
+      
+      <joint name="${side}_gripper_left_finger_joint" type="prismatic">
+         <mimic joint="${side}_gripper_right_finger_joint" multiplier="1" offset="0" />
+         <origin xyz="${M_SCALE*3.5} ${M_SCALE*0} ${M_SCALE*0}" rpy="${-PI*1.5} ${PI*2} ${PI/2}" />
+         <parent link="${side}_gripper_guide_rail" />
+         <child link="${side}_gripper_left_finger" />
+         <axis xyz="0 0 1" />
+         <limit lower="-0.016" upper="0.0" effort="0" velocity="0.5" />
+      </joint>
+    
+      <!-- Gripper Joint for Grasping -->
+      <!--
+      <joint name="${side}_gripper_joint" type="fixed">
+        <axis xyz="0 0 1" />
+        <origin xyz="0.15 0 -0.015" rpy="0 0 0"/>
+        <parent link="${parent}_link"/>
+        <child link="${side}_gripper_link"/>
+      </joint>
+      <link name="${side}_gripper_link">
+        <visual>
+          <origin xyz="0.0 0.0 0" rpy="0 0 0"/>
+          <geometry>
+            <sphere radius="0.0005"/>
+          </geometry>
+          <material name="red" />  
+       </visual>
+     </link>
+     -->
+
+   </macro>
+</robot>
