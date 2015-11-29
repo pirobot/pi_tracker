@@ -72,7 +72,7 @@ class TrackerJointController():
 
         # Use the joint_state publisher for a fake robot
         if not self.use_real_robot:
-            self.joint_state_pub = rospy.Publisher('/joint_states', JointState)      
+            self.joint_state_pub = rospy.Publisher('/joint_states', JointState, queue_size=5)      
         else:
             # Initialize servo controllers for a real robot
             self.init_servos()
@@ -297,7 +297,7 @@ class TrackerJointController():
             self.servo_speed[joint](self.default_joint_speed)
 
             # The position controllers
-            self.servo_position[joint] = rospy.Publisher('/' + joint + '/command', Float64)
+            self.servo_position[joint] = rospy.Publisher('/' + joint + '/command', Float64, queue_size=5)
             
             # A service to relax (disable torque) a servo
             relax_service = '/' + joint + '/torque_enable'

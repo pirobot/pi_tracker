@@ -64,7 +64,7 @@ class TrackerBaseController():
         self.cmd_vel = Twist()
         
         # And publish the command on the /cmd_vel topic
-        self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist)
+        self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=5)
         
         # Keep track of the average width of the shoulders to scale gestures to body size.
         self.shoulder_width = PTL.get_body_dimension(self.skeleton, 'left_shoulder', 'right_shoulder', 0.4)
